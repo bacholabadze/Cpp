@@ -11,7 +11,7 @@ class Animal {
 	string _sound = "";
 public:
 	Animal(); // default Constructor
-	Animal(const string& type, const string& name, const string& sound);
+	explicit Animal(const string& type, const string& name, const string& sound);
 	Animal(const Animal&); // Copy constructor
 	Animal& operator = (const Animal&); // Copy operator
 	~Animal(); // destructor
