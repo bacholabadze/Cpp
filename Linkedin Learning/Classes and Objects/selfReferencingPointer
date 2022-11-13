@@ -1,0 +1,34 @@
+#include <cstdio>
+using namespace std;
+
+class c1 {
+	int i = 0;
+public:
+	void setvalue(const int& value);
+	int getvalue()const;
+	int getvalue2() const;
+};
+
+int c1::getvalue() const {
+	printf("getvalue: this is %p\n", this);  // %p pointer
+	return i;
+}
+
+int c1::getvalue2() const {
+	printf("getvalue2\n");
+	return this->getvalue();
+}
+
+void c1::setvalue(const int& val) { i = val; }
+
+
+int main() {
+	const int i = 47;
+	c1 o1;
+	o1.setvalue(i);
+	printf("address of o1 us %p\n", &o1); // address of o1 us 00AFF848
+	printf("value is %d\n", o1.getvalue()); // getvalue: this is 00AFF848 \n value is 47
+	printf("value is %d\n", o1.getvalue2());  // getvalue2 \n getvalue: this is 00AFF848 \n value is 47
+	return 0;
+}
+
