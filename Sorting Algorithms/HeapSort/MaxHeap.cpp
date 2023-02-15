@@ -15,7 +15,7 @@ void heapify(int A[], int n, int i) {
 	}
 	if (i != large) {
 		swap(A[i], A[large]);
-		heapify(A, n, i);
+		heapify(A, n, large);
 	}
 }
 
