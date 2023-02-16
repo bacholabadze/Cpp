@@ -1,4 +1,3 @@
-// დასასრულებელი
 #include <iostream>
 #include <map>
 #include <set>
@@ -8,7 +7,7 @@
 using namespace std;
 
 // აბრუნებს ყველა უნიკალურ ვერტექსს გრაფიდან
-set<char> GetAllVertex(map<char, map<char, int>> graph) {
+set<char> GetAllVertex(map<char, map<char, int>>& graph) {
 	set<char> keys;
 	for (const auto& item : graph) {
 		keys.insert(item.first);
@@ -16,14 +15,15 @@ set<char> GetAllVertex(map<char, map<char, int>> graph) {
 	return keys;
 }
 
-// ცხრილი სვეტებით (ვერტექსი, უმოკლესი მანძილი src-დან, წინა ვერტექსი)
-map<char, map<int, char>> BuildTable(set<char> vertexs, char src) {
+// ავაგოთ ცარიელი ცხრილი სვეტებით (ვერტექსი, უმოკლესი მანძილი src-დან, წინა ვერტექსი)
+map<char, map<int, char>> BuildTable(set<char>& vertexs, char src) {
 	map<char, map<int, char>> table;
-	for (auto v : vertexs) {
+	for (auto& v : vertexs) {
 		table[v] = map<int, char>{
 			{numeric_limits<int>::max(), ' '}
 		};
 	}
+	// თავის თავთან მანძილი = 0
 	table[src] = map<int, char>{
 		{0, ' '}
 	};
@@ -31,7 +31,7 @@ map<char, map<int, char>> BuildTable(set<char> vertexs, char src) {
 }
 
 // ცხრილის დაბეჭდვა შესაბამისი სვეტებით
-void PrintTable(map<char, map<int, char>> table) {
+void PrintTable(map<char, map<int, char>>& table) {
 	cout << setw(10) << left << "Vertex";
 	cout << setw(20) << left << "Shortest Path";
 	cout << setw(15) << left << "Last Vertex" << endl;
@@ -52,7 +52,7 @@ void PrintTable(map<char, map<int, char>> table) {
 // უმოკლესი მანძილის პოვნა src-დან ყველა ვერტექსამდე
 void Dijkstra(map<char, map<char, int>> graph, char src) {
 	set<char> unvisited = GetAllVertex(graph);
-	set<char> visited;
+	set<char> visited = {};
 
 	map<char, map<int, char>> table = BuildTable(unvisited, src);
 	PrintTable(table);
@@ -62,15 +62,37 @@ void Dijkstra(map<char, map<char, int>> graph, char src) {
 		char currVertex = '\0';;
 
 		// უახლოესი მეზობელი გახდება currVertex
-		int min_value = std::numeric_limits<int>::max();
-		for (const auto& p1 : graph[src]) {
-				if (p1.second < min_value) {
-					currVertex = p1.first;
-					min_value = p1.second;
+		int minDist = std::numeric_limits<int>::max();
+		
+		for (const auto& p : table) {
+			// ვერტექსს უკვე თუ არ ვესტუმრეთ
+			if (unvisited.find(p.first) != unvisited.end() && p.second.begin()->first < minDist) {
+				currVertex = p.first;
+				minDist = p.second.begin()->first;
 			}
 		}
-		cout << "Kvelaze Patara Dzma: " << currVertex << endl;
-		break;
+		//cout << "Kvelaze Patara Dzma: " << currVertex << endl;
+
+		// თუ არ არის მისაწვდომი ვერტექსი შევწყვიტოთ ლუპი
+		if (currVertex == '\0') break;
+
+		// განვაახლოთ თეიბლი currVertex ისთვის
+		for (const auto& neighbor : graph[currVertex]) {
+			if (unvisited.find(neighbor.first) != unvisited.end()) {
+				int newDist = minDist + neighbor.second;
+				if (newDist < table[neighbor.first].begin()->first) {
+					table[neighbor.first].clear();
+					table[neighbor.first][newDist] = currVertex;
+				}
+			}
+		}
+
+		// currVertex დავამატოტ მონახულ ვერტექსში და ამოვშალოთ არ ნახულებიდან.
+		visited.insert(currVertex);
+		unvisited.erase(currVertex);
+
+		// დავბეჭდოთ თეიბლი ყველა ნაბიჯზე
+		PrintTable(table);
 	}
 }
 
@@ -84,5 +106,5 @@ int main() {
 		{'E', {{'D', 1}, {'B', 2}, {'C',5}} }
 	};
 
-	Dijkstra(graph, 'B');
+	Dijkstra(graph, 'A');
 }
