@@ -50,7 +50,7 @@ void PrintTable(map<char, map<int, char>>& table) {
 
 
 // უმოკლესი მანძილის პოვნა src-დან ყველა ვერტექსამდე
-void Dijkstra(map<char, map<char, int>> graph, char src) {
+void Dijkstra(map<char, map<char, int>>& graph, char src) {
 	set<char> unvisited = GetAllVertex(graph);
 	set<char> visited = {};
 
